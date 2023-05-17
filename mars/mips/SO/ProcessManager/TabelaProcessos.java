@@ -26,10 +26,15 @@ public class TabelaProcessos {
 
 
     public static PCB getProcExect(){
-        return this.procExec;
+        return procExec;
     }       
     
     public static void setProcExec(PCB pcb){
+        //setando processo como pronto e adicionando na lista
+        procExec.setEstadoProcesso("Pronto");
+        procProntos.add(procExec);
+
+        //setando o novo processo como exec
         procExec = pcb;
         procExec.setEstadoProcesso("Exec");
     }
