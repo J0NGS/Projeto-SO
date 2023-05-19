@@ -8,7 +8,7 @@ import mars.mips.hardware.RegisterFile;
 public class SyscallFork extends AbstractSyscall{
     
     public SyscallFork(){
-        super(60, "Syscall Fork");
+        super(60, "SyscallFork");
     }
     
     @Override

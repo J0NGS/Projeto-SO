@@ -8,7 +8,7 @@ import mars.mips.SO.ProcessManager.TabelaProcessos;
 
 public class SyscallProcessChange extends AbstractSyscall{
     public SyscallProcessChange() {
-        super(61, "Syscall Process Change");
+        super(61, "SyscallProcessChange");
     }
 
     public void simulate(ProgramStatement statement) throws ProcessingException {

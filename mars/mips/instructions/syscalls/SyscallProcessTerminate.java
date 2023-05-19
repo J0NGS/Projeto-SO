@@ -9,7 +9,7 @@ import mars.mips.SO.ProcessManager.Escalonador;
 public class SyscallProcessTerminate extends AbstractSyscall{
     
     public SyscallProcessTerminate() {
-        super(62, "Syscall Terminate");
+        super(62, "SyscallProcessTerminate");
     }
 
     @Override
