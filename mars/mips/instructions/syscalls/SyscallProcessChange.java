@@ -12,10 +12,13 @@ public class SyscallProcessChange extends AbstractSyscall{
     }
 
     public void simulate(ProgramStatement statement) throws ProcessingException {
-        PCB procExec = TabelaProcessos.getProcTop();
-        procExec.registradoresPCB();
-        Escalonador.escalonar();
-        PCB novoProcExec = TabelaProcessos.getProcTop();
-        novoProcExec.PCBRegistradores();
+        PCB procTop = TabelaProcessos.getProcTop();
+        if(!procTop.getEstadoProcesso().equals("Executando")){
+            procTop.setEstadoProcesso("Executando");
+            procTop.PCBRegistradores();
+        }else{
+            procTop.registradoresPCB();
+            Escalonador.escalonar();
+        }
     }
 }

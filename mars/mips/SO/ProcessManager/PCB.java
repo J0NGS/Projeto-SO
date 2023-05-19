@@ -85,5 +85,11 @@ public class PCB {
      public int getQuantidadeRegistradores() {
         return quantidadeRegistradores;
     }
-
+    // ------------------------------------------------------
+     public int[] getRegistradores() {
+        return registradores;
+    }
+     public void setRegistradores(int[] registradores) {
+        this.registradores = registradores;
+    }
 }

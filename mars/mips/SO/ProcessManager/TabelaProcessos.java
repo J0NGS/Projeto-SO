@@ -1,11 +1,14 @@
 package mars.mips.SO.ProcessManager;
-
+import javax.xml.transform.Source;
+import mars.mips.SO.*;
+import mars.mips.hardware.RegisterFile;
 import java.util.LinkedList;
 import java.util.Queue;
 
+
 public class TabelaProcessos {
 
-    private static Queue<PCB> processos = new LinkedList<>();                                  //Processo seno executado
+    private static Queue<PCB> processos = new LinkedList<>();                                  //Processo sendo executado
 
     //Criando um novo processo
     public static void novoProcesso(int adress){
@@ -18,13 +21,7 @@ public class TabelaProcessos {
     }       
 
     public static void adicionarProc(PCB pcb) {
-        if(processos.size() == 0){
-            pcb.setEstadoProcesso("Executando");
-            pcb.PCBRegistradores();
-        }
-        else
-            pcb.setEstadoProcesso("Pronto");
-        
+        pcb.setEstadoProcesso("Pronto");
         processos.add(pcb);
     }
 
@@ -33,7 +30,7 @@ public class TabelaProcessos {
         if(processos.size() != 0){
             PCB top = getProcTop();
             top.setEstadoProcesso("Executando");
-             top.PCBRegistradores();
+            top.PCBRegistradores();
         }   
         return processo;
     }
