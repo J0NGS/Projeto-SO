@@ -9,8 +9,9 @@ public class Escalonador {
 
     ///Metodo para escolnar o processo
     public static void escalonar(){
-        PCB processoExecutando = TabelaProcessos.getProcExect();
-        TabelaProcessos.adicionarProcPronto(processoExecutando);
+        PCB procExec = TabelaProcessos.getProcExect();
+        if(!procExec.getEstadoProcesso().equals("Bloqueando"))
+            TabelaProcessos.adicionarProcPronto(procExec);
         TabelaProcessos.setProcExec(procProntos.remove());
     }   
 }
