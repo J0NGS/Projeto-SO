@@ -9,7 +9,7 @@ public class Timer extends AbstractMarsToolAndApplication {
 
     private static String name    = "Timer";
     private static String version = "Version 0.1 (João goulart)";
-    private static String heading = "Timer";
+    private static String heading = "Timer";    
 
     public int totalInstructions;
     public int instructionsCount;

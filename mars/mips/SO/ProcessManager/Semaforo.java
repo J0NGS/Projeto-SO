@@ -22,7 +22,7 @@ public class Semaforo {
     public void addProc(){
         if(procBloq.size() > 0){
             PCB procPronto = procBloq.remove(0);
-            TabelaProcessos.adicionarProcPronto(procPronto);
+            TabelaProcessos.adicionarProc(procPronto);;
         }else
             valor++;
     }
@@ -32,13 +32,12 @@ public class Semaforo {
         if(valor > 0)
             valor--;
         else{
-            PCB procExec = TabelaProcessos.getProcExect();
+            PCB procExec = TabelaProcessos.getProcTop();
             procExec.setEstadoProcesso("Bloqueando");
             procBloq.add(procExec);
             Escalonador.escalonar();
         }
     }
-
 
     //Getters
     public int getValor() {

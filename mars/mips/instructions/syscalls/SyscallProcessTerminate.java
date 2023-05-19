@@ -14,10 +14,7 @@ public class SyscallProcessTerminate extends AbstractSyscall{
 
     @Override
     public void simulate(ProgramStatement statement) throws ProcessingException {
-        // pegando o processo para ser finalizado, depois escalonando e removendo da lista de procesos prontos.
-        PCB processoParaFinalizar = TabelaProcessos.getProcExect();
-        Escalonador.escalonar();
-        TabelaProcessos.removerProcPronto(processoParaFinalizar);
+        TabelaProcessos.removerProcTop();
     }
     
 }

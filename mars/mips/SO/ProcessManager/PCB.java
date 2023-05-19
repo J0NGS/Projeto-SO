@@ -11,33 +11,45 @@ public class PCB {
     private String estadoProcesso;
     // Informações do hardware
     private int[] registradores;
-    private final int quantidadeRegistradores = 34;
+    private static final int quantidadeRegistradores= 34;
     
     // Construtor do objeto PCB
     public PCB(int inicioPrograma) {
-        registradores = new int[quantidadeRegistradores];
+        registradores = new int [ quantidadeRegistradores ];
+        setInicioPrograma(inicioPrograma);
+        setEstadoProcesso( "Pronto" );
+        PID = new Random().nextInt( Integer.MAX_VALUE );
     }
     // ------------------------------------------------------
 
     // Método de cópia registradores -> PCB
     public void registradoresPCB() {
-        for(int i = 0; i < quantidadeRegistradores; i++) {
-            if( i >= 32)
-                registradores[i] = RegisterFile.getValue(i + 1);
-            else
-                registradores[i] = RegisterFile.getValue(i); 
+          for(int i = 0; i < quantidadeRegistradores; i++){
+            if (i == 31) {
+                registradores[i] = RegisterFile.getProgramCounter();
+            }
+            else if (i >= 32){ 
+                registradores[i] = RegisterFile.getValue(i+1);
+            }
+            else registradores[i] = RegisterFile.getValue(i);
         }
     }
     // ------------------------------------------------------
 
     // Método de cópia PCB -> registradores
     public void PCBRegistradores() {
-        for(int i = 0; i < quantidadeRegistradores; i++) {
-            if(i>= 32)
-                RegisterFile.updateRegister(i + 1, registradores[i]);
-            else
-                RegisterFile.updateRegister(i + 1, registradores[i]);
+       for(int i = 0; i < quantidadeRegistradores; i++) {
+            if(i == 31){ 
+                continue;
+            }
+            if (i >= 32){ 
+                RegisterFile.updateRegister(i+1, registradores[i]);
+            }
+            else RegisterFile.updateRegister(i, registradores[i]);
         }
+
+        int pc = registradores[31] == 0 ? inicioPrograma : registradores[31];
+        RegisterFile.setProgramCounter(pc);
     }
     // ------------------------------------------------------
 
@@ -70,4 +82,8 @@ public class PCB {
         this.estadoProcesso = estadoProcesso;
     }
     // ------------------------------------------------------
+     public int getQuantidadeRegistradores() {
+        return quantidadeRegistradores;
+    }
+
 }

@@ -1,42 +1,40 @@
 package mars.mips.SO.ProcessManager;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class TabelaProcessos {
 
-    private static List<PCB> procProntos = new ArrayList<>();      //Lista de processos prontos para serem executados
-    private static PCB procExec;                                   //Processo seno executado
+    private static Queue<PCB> processos = new LinkedList<>();                                  //Processo seno executado
 
     //Criando um novo processo
-    public static void novoProcesso(int inicio){
-        PCB processo = new PCB(inicio);
-        procProntos.add(processo);
-        Escalonador.escalonar();
+    public static void novoProcesso(int adress){
+        PCB processo = new PCB(adress);
+        adicionarProc(processo);
     }
     
-
-    public static PCB getProcExect(){
-        return procExec;
+    public static PCB getProcTop(){
+        return processos.peek();
     }       
-    
-    public static void setProcExec(PCB pcb){
-        // setando o estado para executando do processo
-        pcb.setEstadoProcesso("Executando");
-        procExec = pcb;
-    }
 
-
-    public static void adicionarProcPronto(PCB pcb) {
-        if(!pcb.getEstadoProcesso().equals("Pronto")) {
-            pcb.setEstadoProcesso("Pronto");
+    public static void adicionarProc(PCB pcb) {
+        if(processos.size() == 0){
+            pcb.setEstadoProcesso("Executando");
+            pcb.PCBRegistradores();
         }
-
-        procProntos.add(pcb);
+        else
+            pcb.setEstadoProcesso("Pronto");
+        
+        processos.add(pcb);
     }
 
-    public static void removerProcPronto(PCB pcb) {
-        procProntos.remove(pcb);
+    public static PCB removerProcTop() {
+        PCB processo = processos.remove();
+        if(processos.size() != 0){
+            PCB top = getProcTop();
+            top.setEstadoProcesso("Executando");
+             top.PCBRegistradores();
+        }   
+        return processo;
     }
-}
+} 
