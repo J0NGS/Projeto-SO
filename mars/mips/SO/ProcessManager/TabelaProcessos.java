@@ -9,34 +9,34 @@ public class TabelaProcessos {
     private static List<PCB> procProntos = new ArrayList<>();      //Lista de processos prontos para serem executados
     private static PCB procExec;                                   //Processo seno executado
 
-    
-
     //Criando um novo processo
-    public static void novo(int inicio){
+    public static void novoProcesso(int inicio){
         PCB processo = new PCB(inicio);
         procProntos.add(processo);
         Escalonador.escalonar();
     }
     
-    ///Atualiza processo para executado
-    public static void executando(){
-        procExec.registradoresPCB();
-        procExec.PCBRegistradores();
-    }
-
 
     public static PCB getProcExect(){
         return procExec;
     }       
     
     public static void setProcExec(PCB pcb){
-        //setando processo como pronto e adicionando na lista
-        procExec.setEstadoProcesso("Pronto");
-        procProntos.add(procExec);
-
-        //setando o novo processo como exec
+        // setando o estado para executando do processo
+        pcb.setEstadoProcesso("Executando");
         procExec = pcb;
-        procExec.setEstadoProcesso("Exec");
     }
 
+
+    public static void adicionarProcPronto(PCB pcb) {
+        if(!pcb.getEstadoProcesso().equals("Pronto")) {
+            pcb.setEstadoProcesso("Pronto");
+        }
+
+        procProntos.add(pcb);
+    }
+
+    public static void removerProcPronto(PCB pcb) {
+        procProntos.remove(pcb);
+    }
 }

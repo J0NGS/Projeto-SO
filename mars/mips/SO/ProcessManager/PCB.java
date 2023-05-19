@@ -11,7 +11,7 @@ public class PCB {
     private String estadoProcesso;
     // Informações do hardware
     private int[] registradores;
-    private final int quantidadeRegistradores = 32;
+    private final int quantidadeRegistradores = 34;
     
     // Construtor do objeto PCB
     public PCB(int inicioPrograma) {
@@ -22,7 +22,10 @@ public class PCB {
     // Método de cópia registradores -> PCB
     public void registradoresPCB() {
         for(int i = 0; i < quantidadeRegistradores; i++) {
-            registradores[i] = RegisterFile.getValue(i);
+            if( i >= 32)
+                registradores[i] = RegisterFile.getValue(i + 1);
+            else
+                registradores[i] = RegisterFile.getValue(i); 
         }
     }
     // ------------------------------------------------------
@@ -30,7 +33,10 @@ public class PCB {
     // Método de cópia PCB -> registradores
     public void PCBRegistradores() {
         for(int i = 0; i < quantidadeRegistradores; i++) {
-            RegisterFile.updateRegister(i, registradores[1]);
+            if(i>= 32)
+                RegisterFile.updateRegister(i + 1, registradores[i]);
+            else
+                RegisterFile.updateRegister(i + 1, registradores[i]);
         }
     }
     // ------------------------------------------------------
