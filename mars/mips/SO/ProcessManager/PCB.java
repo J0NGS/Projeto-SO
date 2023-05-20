@@ -7,17 +7,20 @@ public class PCB {
 
     // Informações do processo
     private int inicioPrograma;
+    private int fimPrograma;
     private int PID;
+    private int prioridade;
     private String estadoProcesso;
     // Informações do hardware
     private int[] registradores;
     private static final int quantidadeRegistradores= 34;
     
     // Construtor do objeto PCB
-    public PCB(int inicioPrograma) {
+    public PCB(int inicioPrograma, int prioridade) {
         registradores = new int [ quantidadeRegistradores ];
-        setInicioPrograma(inicioPrograma);
-        setEstadoProcesso( "Pronto" );
+        this.inicioPrograma = inicioPrograma;
+        this.prioridade = prioridade;
+        estadoProcesso = "Pronto";
         PID = new Random().nextInt( Integer.MAX_VALUE );
     }
     // ------------------------------------------------------
@@ -62,6 +65,16 @@ public class PCB {
         this.inicioPrograma = inicioPrograma;
     }
     // ------------------------------------------------------
+    
+    // fimprograma -> get e set
+    public int getFimPrograma(){
+        return this.fimPrograma;
+    }
+    
+    public void setFimPrograma(int fimPrograma) {
+        this.fimPrograma = fimPrograma;
+    }
+    // ------------------------------------------------------
 
     // PID -> get e set
     public int getPID(){
@@ -91,5 +104,13 @@ public class PCB {
     }
      public void setRegistradores(int[] registradores) {
         this.registradores = registradores;
+    }
+    // ------------------------------------------------------
+     public int getPrioridade() {
+        return prioridade;
+    }
+
+    public void setPrioridade(int prioridade) {
+        this.prioridade = prioridade;
     }
 }
