@@ -49,6 +49,6 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
    * Performs syscall function to exit the MIPS program.
    */
        public void simulate(ProgramStatement statement) throws ProcessingException {
-         throw new ProcessingException();  // empty exception list.
+         throw new ProcessingException();  // lista de exceção vazia.
       }
    }

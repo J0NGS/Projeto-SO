@@ -6,7 +6,7 @@ import mars.mips.SO.ProcessManager.Semaforo;
 import mars.mips.SO.ProcessManager.SemaforoList;
 import mars.mips.hardware.RegisterFile;
 
-public class SyscallUpSemaphore extends AbstractSyscall{
+public class SyscallUpSemaphore extends AbstractSyscall {
     public SyscallUpSemaphore() {
         super(66, "SyscallUpSemaphore");
     }
@@ -14,11 +14,12 @@ public class SyscallUpSemaphore extends AbstractSyscall{
     @Override
     public void simulate(ProgramStatement statement) throws ProcessingException {
         int adress = RegisterFile.getValue(4);
+
         try {
             Semaforo semaforo = SemaforoList.getByAdress(adress);
-            semaforo.addProc();
+            semaforo.incrementarValor();
         } catch (Exception e) {
-            e.getMessage();
+            e.printStackTrace();
         }
     }
 }

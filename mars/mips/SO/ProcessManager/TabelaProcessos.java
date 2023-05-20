@@ -1,101 +1,94 @@
 package mars.mips.SO.ProcessManager;
-import javax.xml.transform.Source;
-import mars.mips.SO.*;
-import java.util.LinkedList;
-import java.util.Queue;
-import mars.mips.hardware.RegisterFile;
+import java.util.ArrayList;
+import java.util.List;
+
+import mars.mips.SO.Memory.GerenciadorMemoria;
+import mars.mips.SO.Memory.TabelaVirtual;
+
 
 
 public class TabelaProcessos {
-
-    private static Queue<PCB> processos = new LinkedList<>();                                  //Processo sendo executado
-    private static PCB procExec; // processo executando
-    public static Queue<PCB> getProcessos() {
-		return processos;
-	}
-	public static void setProcessos(Queue<PCB> processos) {
-		TabelaProcessos.processos = processos;
-	} 
-
-
-    //Criando um novo processo
-    public static void novoProcesso(int adress){
-        PCB processo = new PCB(adress);
-        adicionarProc(processo);
-    }
+    private static int lastAdress = 0;
+    private static List<PCB> processos = new ArrayList<PCB>();
     
-    public static PCB getProcTop(){
-        return processos.peek();
-    }       
+    public static void adicionarProcesso(PCB processo) {
+        processo.setEstadoProcesso("Pronto");
+        
+        if(processo.getAdressTail() == 0) {
+            processo.setAdressTail(lastAdress);
+        }
 
-    public static void adicionarProc(PCB pcb) {
-        pcb.setEstadoProcesso("Pronto");
-        processos.add(pcb);
+        int tamanho = processos.size();
+        if(tamanho > 0) {
+            PCB penultimoProcesso = processos.get(tamanho - 1);
+
+            if(penultimoProcesso.getAdressTail() == 0) {
+                penultimoProcesso.setAdressTail(
+                    processo.getEnderecoInicio() - 4
+                );
+            }
+        }
+
+        processos.add(processo);
     }
 
-    public static PCB removerProcTop() {
-        PCB processo = processos.remove();
-        if(processos.size() != 0){
-            PCB top = getProcTop();
-            top.setEstadoProcesso("Executando");
-            top.PCBRegistradores();
-        }   
-        return processo;
+    public static void create(int adressInit, int prioridade){
+        PCB processo = new PCB(
+            adressInit, prioridade, 
+            new TabelaVirtual(GerenciadorMemoria.getQntMaxBlocos())
+        );
+        adicionarProcesso(processo);
     }
 
-    public static String algoritmoPadrao = "FIFO"; // algoritmo de escalonamento padrao
+    public static int getTamanhoLista() {
+        return processos.size();
+    }
 
+    public static PCB getProcTop() {
+        return processos.size() == 0 ? null : processos.get(0);
+    }
 
-	public static String getTypeAlgoritmo() {
-		return algoritmoPadrao;
-	}
+    public static PCB getProcExec() {
+        PCB procTop = getProcTop();
 
-	public static void setTypeAlgoritmo(String str) {
-		TabelaProcessos.algoritmoPadrao = str;
-	}
+        if(
+            procTop == null || 
+            !procTop.getEstadoProcesso().equals("Executando")
+        ) {
+            return null;
+        }
 
-    public static void processChange(String algoritmo) {
+        return procTop;
+    }
 
-        if(getProcTop() != null) { // processo sendo executado
-			System.out.println("Salvando");
-			procExec.setEstadoProcesso("ready"); // mudando meu estado
-			procExec.setInicioPrograma(RegisterFile.getProgramCounter());
-			procExec.registradoresPCB();  // salvando contexto
-		}
+    public static boolean remover(PCB processo) {
+        PCB procTop = getProcTop();
 
-        switch (algoritmo) {
-            case "FIFO":
-			    if(Escalonador.fifo()) {
-				    RegisterFile.setProgramCounter(procExec.getNumeroDeRegistradores());
+        if(processo == procTop) {
+            removerProcessoTopo();
+            return true;
+        }
 
-				    System.out.println("Indo para: " + RegisterFile.getProgramCounter());
-				    procExec.PCBRegistradores();
-			    }
-                    break;
-            case "PFixa":    
-                if(Escalonador.fixedPriority()) {
-				    for(int i = 0;  i < procExec.getValorRegistros().length; i++) {
-					    RegisterFile.updateRegister(i, procExec.getInicioPrograma());
-				    }
-			    }
-			    if(procExec != null) {
-				    RegisterFile.setProgramCounter(procExec.getInicioPrograma());
-			    }
-                    break;
-            case "Loteria": 
-                if(Escalonador.lottery()) {
-                    for(int i = 0;  i < procExec.getRegistradores().length; i++) {
-                        RegisterFile.updateRegister(i, procExec.getInicioPrograma());
-                    }
-                }
-                if(procExec != null) {
-                    RegisterFile.setProgramCounter(procExec.getInicioPrograma());
-                }
-                break;
-            default:
-                System.out.println("indo parar aqui");
-            break;
-         }
+        return processos.remove(processo);
+    }
+
+    public static PCB removerProcessoTopo() {
+        PCB processoRemovido = processos.remove(0);
+        return processoRemovido;
+    }
+
+    public static List<PCB> getListaProcessos() {
+        return processos;
+    }
+
+    public static int getUltimoEnderecoPrograma() {
+        return lastAdress;
+    }
+
+    public static void setUltimoEnderecoPrograma(
+        int ultimoEnderecoProgramaRecebido
+    ) {
+        lastAdress = ultimoEnderecoProgramaRecebido;
     }
 
 } 

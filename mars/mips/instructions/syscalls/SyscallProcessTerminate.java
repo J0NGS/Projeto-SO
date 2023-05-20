@@ -14,7 +14,7 @@ public class SyscallProcessTerminate extends AbstractSyscall{
 
     @Override
     public void simulate(ProgramStatement statement) throws ProcessingException {
-        TabelaProcessos.removerProcTop();
+        TabelaProcessos.removerProcessoTopo();
     }
     
 }

@@ -1,116 +1,104 @@
 package mars.mips.SO.ProcessManager;
+import mars.mips.SO.Memory.TabelaVirtual;
 import mars.mips.hardware.RegisterFile;
 import java.util.Random;
 
-// Classe que define a PCB
 public class PCB {
-
-    // Informações do processo
-    private int inicioPrograma;
-    private int fimPrograma;
+    private int adressInit = 0;     // endereço de incio;
+    private int adressTail = 0;     // endereço de Final;
     private int PID;
+    private String estado;
     private int prioridade;
-    private String estadoProcesso;
-    // Informações do hardware
-    private int[] registradores;
-    private static final int quantidadeRegistradores= 34;
+    private int[] valorRegistros;
+    private static final int registradores = 34;
+    private TabelaVirtual tabelaVirtual;
     
-    // Construtor do objeto PCB
-    public PCB(int inicioPrograma, int prioridade) {
-        registradores = new int [ quantidadeRegistradores ];
-        this.inicioPrograma = inicioPrograma;
-        this.prioridade = prioridade;
-        estadoProcesso = "Pronto";
-        PID = new Random().nextInt( Integer.MAX_VALUE );
+    public PCB(int adressInit, int prioridade, TabelaVirtual tabelaVirtual){
+        valorRegistros = new int[registradores];
+        setEnderecoInicio(adressInit);
+        setPrioridade(prioridade);
+        estado = "Pronto";
+        PID = new Random().nextInt(Integer.MAX_VALUE);
+        setTabelaVirtual(tabelaVirtual);
     }
-    // ------------------------------------------------------
 
-    // Método de cópia registradores -> PCB
-    public void registradoresPCB() {
-          for(int i = 0; i < quantidadeRegistradores; i++){
-            if (i == 31) {
-                registradores[i] = RegisterFile.getProgramCounter();
-            }
-            else if (i >= 32){ 
-                registradores[i] = RegisterFile.getValue(i+1);
-            }
-            else registradores[i] = RegisterFile.getValue(i);
+    public void RegistradoresPCB(){
+        for(int i = 0; i < registradores; i++){
+            if (i == 31) valorRegistros[i] = RegisterFile.getProgramCounter();
+            else if (i >= 32) valorRegistros[i] = RegisterFile.getValue(i+1);
+            else valorRegistros[i] = RegisterFile.getValue(i);
         }
     }
-    // ------------------------------------------------------
 
-    // Método de cópia PCB -> registradores
-    public void PCBRegistradores() {
-       for(int i = 0; i < quantidadeRegistradores; i++) {
-            if(i == 31){ 
-                continue;
-            }
-            if (i >= 32){ 
-                RegisterFile.updateRegister(i+1, registradores[i]);
-            }
-            else RegisterFile.updateRegister(i, registradores[i]);
+    public void PCBRegistradores(){
+        for(int i = 0; i < registradores; i++) {
+            if(i == 31) continue;
+                
+            if (i >= 32) RegisterFile.updateRegister(i+1, valorRegistros[i]);
+            else RegisterFile.updateRegister(i, valorRegistros[i]);
         }
 
-        int pc = registradores[31] == 0 ? inicioPrograma : registradores[31];
+        int pc = valorRegistros[31] == 0 ? adressInit : valorRegistros[31];
         RegisterFile.setProgramCounter(pc);
     }
-    // ------------------------------------------------------
 
-    // inicioPrograma -> get e set
-    public int getInicioPrograma(){
-        return this.inicioPrograma;
+    public int getNumeroDeRegistradores() {
+        return registradores;
     }
-    
-    public void setInicioPrograma(int inicioPrograma) {
-        this.inicioPrograma = inicioPrograma;
-    }
-    // ------------------------------------------------------
-    
-    // fimprograma -> get e set
-    public int getFimPrograma(){
-        return this.fimPrograma;
-    }
-    
-    public void setFimPrograma(int fimPrograma) {
-        this.fimPrograma = fimPrograma;
-    }
-    // ------------------------------------------------------
 
-    // PID -> get e set
-    public int getPID(){
-        return this.PID;
+    public int[] getValorRegistros() {
+        return valorRegistros;
+    }
+
+    public void setValorRegistros(int[] valorRegistros) {
+        this.valorRegistros = valorRegistros;
+    }
+
+    public String getEstadoProcesso() {
+        return estado;
+    }
+
+    public void setEstadoProcesso(String estado) {
+        this.estado = estado;
+    }
+
+    public int getEnderecoInicio() {
+        return adressInit;
+    }
+
+    public void setEnderecoInicio(int adress) {
+        this.adressInit = adress;
+    }
+
+    public int getPID() {
+        return PID;
     }
 
     public void setPID(int PID) {
         this.PID = PID;
     }
-    // ------------------------------------------------------
 
-    // estadoProcesso -> get e set
-    public String getEstadoProcesso(){
-        return this.estadoProcesso;
-    }
-
-    public void setEstadoProcesso(String estadoProcesso) {
-        this.estadoProcesso = estadoProcesso;
-    }
-    // ------------------------------------------------------
-     public int getQuantidadeRegistradores() {
-        return quantidadeRegistradores;
-    }
-    // ------------------------------------------------------
-     public int[] getRegistradores() {
-        return registradores;
-    }
-     public void setRegistradores(int[] registradores) {
-        this.registradores = registradores;
-    }
-    // ------------------------------------------------------
-     public int getPrioridade() {
+    public int getPrioridade() {
         return prioridade;
     }
 
     public void setPrioridade(int prioridade) {
         this.prioridade = prioridade;
+    }
+
+    public int getAdressTail() {
+        return adressTail;
+    }
+
+    public void setAdressTail(int adress) {
+        this.adressInit = adressTail;
+    }
+
+    public TabelaVirtual getTabelaVirtual() {
+        return tabelaVirtual;
+    }
+
+    public void setTabelaVirtual(TabelaVirtual tabelaVirtual) {
+        this.tabelaVirtual = tabelaVirtual;
     }
 }

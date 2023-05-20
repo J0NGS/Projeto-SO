@@ -26,11 +26,11 @@ public class GerenciadorMemoria {
         int pc = RegisterFile.getProgramCounter();
         // TODO
         
-        if (procExec.getInicioPrograma() > pc || procExec.getFimPrograma() < pc){
+        if (procExec.getEnderecoInicio() > pc || procExec.getAdressTail() < pc){
             SystemIO.printString(
                 "Os limites de endereço do processo em execução, que possui limite superior: " + 
-                procExec.getInicioPrograma() + " e limite inferior: " +
-                procExec.getFimPrograma() + " estão fora da área de acesso.\n"
+                procExec.getEnderecoInicio() + " e limite inferior: " +
+                procExec.getAdressTail() + " estão fora da área de acesso.\n"
             );
             SystemIO.printString("Endereço da tentativa de acesso: " + pc);
 

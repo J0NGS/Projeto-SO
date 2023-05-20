@@ -1,64 +1,73 @@
 package mars.mips.SO.ProcessManager;
 
 import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
+import java.util.Random;
 
 public class Escalonador {
+	private String tipoEscalonamento;
 
-    private String escalonamento;
-	private Queue<PCB> baixa = null;
-	private Queue<PCB> media = null;
-	private Queue<PCB> alta = null;
+	private Queue<PCB> baixaPrioridade = null;
+	private Queue<PCB> mediaPrioridade = null;
+	private Queue<PCB> altaPrioridade = null;
 
-	public Escalonador(String escalonamento) {
-		this.escalonamento = escalonamento;
+	public Escalonador(String tipoEscalonamento) {
+		this.tipoEscalonamento = tipoEscalonamento;
 	}
 
 	// Utilizado para setar processo para o início (Executando).
-	private void trocarPosicoes(int posicao) {
-		Collections.swap(TabelaProcessos.getProcessos(), 0, posicao);
+	private void trocarPosicoesDaLista(int posicao) {
+		Collections.swap(TabelaProcessos.getListaProcessos(), 0, posicao);
 	}
 
     public void escalonar(boolean encerrarProcesso) {
-		if(ProcessesTable.getTamanhoLista() == 0) return;
+		if(TabelaProcessos.getTamanhoLista() == 0) return;
+		PCB processoAntigo = TabelaProcessos.getProcExec();
 
-		PCB processoAntigo = ProcessesTable.getProcessoExecutando();
+		boolean unicoElemento = TabelaProcessos.getTamanhoLista() == 1;
+		if(!unicoElemento) {
+			switch (tipoEscalonamento) {
+				case "FIFO": {
+					fifo(processoAntigo);
+					break;
+				}
+			
+				case "PFixa": {
+					prioridadeFixa();
+					break;
+				}
+			
+				case "Loteria": {
+					loteria();
+					break;
+				}
+					
+				default: System.out.println("Tipo escolhido inválido");
+			}	
+		}
+
 		if(processoAntigo != null) {
-			if(encerrarProcesso) ProcessesTable.removerProcesso(processoAntigo);
+			if(encerrarProcesso && !unicoElemento) 
+				TabelaProcessos.remover(processoAntigo);
 			else {
 				processoAntigo.setEstadoProcesso("Pronto");
-				processoAntigo.copiarRegistradoresParaPCB();
+				processoAntigo.RegistradoresPCB();
 			}
 		}
 
-        switch (tipoEscalonamento) {
-            case "FIFO": {
-				fifo();
-				break;
-			}
-
-            case "PFixa": {
-				prioridadeFixa();
-				break;
-			}
-
-			case "Loteria": {
-				loteria();
-				break;
-			}
-
-			default: System.out.println("Indo parar aqui");
-		}
-
-		PCB processoExecutando = ProcessesTable.getProcessoTopo();
+		PCB processoExecutando = TabelaProcessos.getProcTop();
 		processoExecutando.setEstadoProcesso("Executando");
-        processoExecutando.copiarPCBparaRegistradores();
+        processoExecutando.PCBRegistradores();
     }
 
 	// Funções FIFO.
-    private void fifo() {
-		PCB processoExecutando = ProcessesTable.removerProcessoTopo();
-        ProcessesTable.adicionarProcesso(processoExecutando);
+    private void fifo(PCB processoAntigo) {
+		if(processoAntigo != null) {
+			TabelaProcessos.removerProcessoTopo();
+			TabelaProcessos.adicionarProcesso(processoAntigo);
+		}
 	}
 
 	// Funções prioridade fixa.
@@ -88,19 +97,19 @@ public class Escalonador {
 				altaPrioridade.add(processo);
 				break;
 			}
-			default: 
+			default: return;
 		}
 	}
-
+	
 	private void criarFilasDePrioridade() {
-		List<PCB> listaProcessos = ProcessesTable.getListaProcessos();
+		List<PCB> listaProcessos = TabelaProcessos.getListaProcessos();
 
 		for(PCB processo : listaProcessos) {
 			adicionarNaFilaDePrioridade(processo);
 		}
 	}
 
-	private PCB obterProcessoPrioritario(Queue<PCB> filaPrioridade, PCB processoTopo) {
+	private PCB obterProcessoPrioritario(Queue<PCB> filaPrioridade) {
 		if(filaPrioridade == null) return null;
 
 		PCB topoPrioridade = filaPrioridade.peek();
@@ -109,26 +118,24 @@ public class Escalonador {
 
 	private void prioridadeFixa() {
 		criarFilasDePrioridade();
-
-		PCB processoTopo = ProcessesTable.getProcessoExecutando();
-		PCB maiorPrioridade = obterProcessoPrioritario(altaPrioridade, processoTopo);
+		PCB maiorPrioridade = obterProcessoPrioritario(altaPrioridade);
 
 		if(maiorPrioridade == null) {
-			maiorPrioridade = obterProcessoPrioritario(mediaPrioridade, processoTopo);
+			maiorPrioridade = obterProcessoPrioritario(mediaPrioridade);
 
 			if(maiorPrioridade == null) {
-				maiorPrioridade = obterProcessoPrioritario(baixaPrioridade, processoTopo);
+				maiorPrioridade = obterProcessoPrioritario(baixaPrioridade);
 			}
 		}
 
-		int indexProcessoPrioritario = ProcessesTable.getListaProcessos().indexOf(maiorPrioridade);
+		int indexProcessoPrioritario = TabelaProcessos.getListaProcessos().indexOf(maiorPrioridade);
 		trocarPosicoesDaLista(indexProcessoPrioritario);
 	}
-
+	
 	// Funções loteria.
 	private void loteria() {
 		Random random = new Random();
-		int valorAleatorio = random.nextInt(ProcessesTable.getTamanhoLista()-1)+1;
+		int valorAleatorio = random.nextInt(TabelaProcessos.getTamanhoLista()-1)+1;
 
 		trocarPosicoesDaLista(valorAleatorio);
 	}

@@ -3,8 +3,7 @@ package mars.mips.instructions.syscalls;
 import mars.ProcessingException;
 import mars.ProgramStatement;
 import mars.mips.SO.ProcessManager.Escalonador;
-import mars.mips.SO.ProcessManager.PCB;
-import mars.mips.SO.ProcessManager.TabelaProcessos;
+import mars.tools.Timer;
 
 public class SyscallProcessChange extends AbstractSyscall{
     public SyscallProcessChange() {
@@ -12,13 +11,7 @@ public class SyscallProcessChange extends AbstractSyscall{
     }
 
     public void simulate(ProgramStatement statement) throws ProcessingException {
-        PCB procTop = TabelaProcessos.getProcTop();
-        if(!procTop.getEstadoProcesso().equals("Executando")){
-            procTop.setEstadoProcesso("Executando");
-            procTop.PCBRegistradores();
-        }else{
-            procTop.registradoresPCB();
-            Escalonador.escalonar();
-        }
+         Escalonador escalonador = new Escalonador(Timer.getAlgoritmoSelecionado());
+        escalonador.escalonar(false);
     }
 }
